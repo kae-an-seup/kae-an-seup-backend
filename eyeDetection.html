@@ -30,7 +30,7 @@
               <p class="panel-heading">
                 Mediapipe Face Mesh
                 <p>count: <input id="count-box" value="0" style="border: none;"></p>
-                <p style="display: none;">gaze: <input id="gaze-box" value="0" style="border: none;"></p>
+                <p>gaze: <input id="gaze-box" value="0" style="border: none;"></p>
               </p>
               <div class="panel-block">
                 <canvas class="output2" width="480px" height="480px"></canvas>
@@ -219,16 +219,29 @@
                 if (y > max_y) max_y = y;
             }
 
-            let grayEyeData = new Uint8Array(4 * (max_x*100 - min_x*100) * (max_y*100 - min_y*100));
+            // console.log("min_x: " + min_x);
+            // console.log("max_x: " + max_x);
+            // console.log("min_y: " + min_y);
+            // console.log("max_y: " + max_y);
+            min_x *= 100
+            max_x *= 100
+            min_y *= 100
+            max_y *= 100
+
+            // let grayEyeData = new Uint8Array(4 * (max_x*100 - min_x*100) * (max_y*100 - min_y*100));
+            let grayEyeData = new Uint8Array(4 * (max_x - min_x) * (max_y - min_y));
             let width = max_x - min_x;
             for (let i = 0, j = 0; i < eyeData.length; i += 4) {
                 let x = (i / 4) % width;
                 let y = Math.floor((i / 4) / width);
                 if (x >= min_x && x < max_x && y >= min_y && y < max_y) {
                     let index = (x - min_x) + (y - min_y) * width;
-                    grayEyeData[j++] = eyeData[i];
+                    // grayEyeData[j++] = eyeData[i];
+                    grayEyeData[j++] = index;
+                    // console.log("index: " + index)
                 }
             }
+            // console.log(grayEyeData);
 
             let thresholdEye = new Uint8Array(grayEyeData.length);
             let thresholdValue = 70;
