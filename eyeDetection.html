@@ -45,6 +45,8 @@
       </div>
 
     <script>
+      setInterval(detectBlink, 5000);
+      setInterval(threeMCheck, 1800000);
       class FPS {
         constructor() {
             this.startTime = 0;
@@ -71,6 +73,8 @@
       let counter = 0;
       let re = false;
       let c = 0;
+      let check = false; 
+      let check30M = 0
       const video2 = document.getElementsByClassName('input_video2')[0];
       const out2 = document.getElementsByClassName('output2')[0];
       const controlsElement2 = document.getElementsByClassName('control2')[0];
@@ -132,15 +136,16 @@
                     const right_eye_ratio = getBlinkingRatio(FACEMESH_RIGHT_EYE, landmarks);
                     const blinking_ratio = (left_eye_ratio + right_eye_ratio) / 2;
 
-                    if (blinking_ratio > 2.5) {
+                    if (blinking_ratio > 2.55) {
                         // console.log("눈 감은 상태 혹은 깜박임");
                         re = true;
                         console.log("눈 깜박임 횟수"+c);
                         countBox.value = c
-                        // console.log("blinking : " + blinking_ratio);
+                        console.log("blinking : " + blinking_ratio);
                     } else {
                         if (re == true) {
                         c += 1;
+                        check = true
                         // console.log("눈 깜박임 횟수: "+c);
                         re = false;
                         }
@@ -274,6 +279,24 @@
 
           return ratio = hor_line_length / (ver_line_length)
 
+        }
+
+        function detectBlink() {
+          if (!check) {
+            console.log("사용자가 5초 동안 눈을 깜박이지 않았습니다.");
+            check30M +=1
+          }
+          check = false;
+        }
+
+        function threeMCheck() {
+          if (check30M <= 108) {
+            console.log("눈이 너무 건조합니다. 눈을 자주 깜박여주세요! 혹은 아이고를 실행해 눈을 풀어주세요!")
+            check30M = 0
+          } else {
+            console.log("잘하고 계십니다! 계속해서 눈을 자주 깜박여주세요")
+            check30M = 0
+          }
         }
 
         
